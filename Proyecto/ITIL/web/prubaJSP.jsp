@@ -19,7 +19,7 @@
          <form action="agregar.jsp" method="get">
              IdArea<input type="text" name="idArea"><br>
              Nombre<input type="text" name="Nombre"><br>
-             Descripcion<input type="text" name="descripcion"><br>
+             Descripcion del Area<input type="text" name="descripcion"><br>
              <p><input type="submit" value="Enviar"></p>
          </form>
          
