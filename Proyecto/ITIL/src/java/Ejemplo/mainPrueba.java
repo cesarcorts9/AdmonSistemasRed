@@ -21,61 +21,12 @@ import java.util.List;
 public class mainPrueba {
     public static void main(String[] args) throws RollbackFailureException, Exception{
         
-        
-        LenguajeJpaController LC=new LenguajeJpaController();// declaramos un controlador de la entidad Lenguaje
-        //hacemos un select de todos los lenguajes
-        List<Lenguaje> AllLenguajes = LC.findLenguajeEntities();
-
-         //los imprimimos
-        System.out.println("------antes de insetar------");
-        System.out.println("Hay "+LC.getLenguajeCount() +" lenguajes");
-        for (int i = 0; i < AllLenguajes.size(); i++) {
-            System.out.println(AllLenguajes.get(i).getLenLenguaje()); 
-        }
-        
-        //insertamos un lenguaje
-         Lenguaje l=new Lenguaje();
-        l.setLenLenguaje("Esp");
-        l.setLenNombre("Espanol");
-        LC.create(l);
-        
-        System.out.println();
-        System.out.println();
-        
-         //volvemos a imprimir
-         AllLenguajes = LC.findLenguajeEntities();//recuperamos todos
-        System.out.println("------despues de insetar------");
-        System.out.println("Hay "+LC.getLenguajeCount() +" lenguajes");
-        for (int i = 0; i < AllLenguajes.size(); i++) {
-            System.out.println(AllLenguajes.get(i).getLenLenguaje() +"  "+ AllLenguajes.get(i).getLenNombre()); 
-        }
-        
-        
-        //buscamos un lenguaje en especifico
-        Lenguaje findLenguaje = LC.findLenguaje("Esp");
-        //System.out.println(findLenguaje.getLenLenguaje());
-        
-        
-        //Editamos un leguaje
-        l.setLenNombre("Italiano");
-        LC.edit(l);
-        
-        System.out.println();
-        System.out.println();
-        //imprimimos otra vez
-        AllLenguajes = LC.findLenguajeEntities();//recuperamos todos
-        System.out.println("------despues de Editar------");
-        System.out.println("Hay "+LC.getLenguajeCount() +" lenguajes");
-        for (int i = 0; i < AllLenguajes.size(); i++) {
-            System.out.println(AllLenguajes.get(i).getLenLenguaje() +"  "+ AllLenguajes.get(i).getLenNombre()); 
-        }
-        
-        //Eliminamos
-       LC.destroy("Esp");
-        
-        //contamos cuantos lenguajes tenemos
-        System.out.println();
-        System.out.println();
-        System.out.println("Hay "+LC.getLenguajeCount() +" lenguajes");
+       AreaJpaController control= new AreaJpaController();//instaciamos la clase controlador
+       Area area=new Area();//instanciamos la clase que contiene los getter an setter para llenar nuestro objeto area
+       
+       area.setAreidArea("100");//llenando el objeto
+       area.setAreNombre("Electronica");
+       area.setAreDespcripcion("Area de Electronica");
+       control.create(area);//mandamos el objeto de tipo Area al metodo del controlador area
     }
 }
