@@ -20,18 +20,20 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.transaction.UserTransaction;
 
 /**
  *
- * @author madman
+ * @author DELL
  */
 public class DeptoJpaController implements Serializable {
 
-    public DeptoJpaController() {
+    public DeptoJpaController(){
+        
     }
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    private EntityManager getEntityManager() {
         emf = Persistence.createEntityManagerFactory("It_ITILPU");
         return emf.createEntityManager();
     }
@@ -39,8 +41,8 @@ public class DeptoJpaController implements Serializable {
     public void create(Depto depto) throws PreexistingEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+           
             em = getEntityManager();
-            em.getTransaction().begin();
             Area areaareidArea = depto.getAreaareidArea();
             if (areaareidArea != null) {
                 areaareidArea = em.getReference(areaareidArea.getClass(), areaareidArea.getAreidArea());
@@ -48,13 +50,13 @@ public class DeptoJpaController implements Serializable {
             }
             em.persist(depto);
             if (areaareidArea != null) {
-                areaareidArea.getDeptoCollection().add(depto);
+                areaareidArea.getDeptoList().add(depto);
                 areaareidArea = em.merge(areaareidArea);
             }
-            em.getTransaction().commit();
+            
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+                
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -72,8 +74,8 @@ public class DeptoJpaController implements Serializable {
     public void edit(Depto depto) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+           
             em = getEntityManager();
-            em.getTransaction().begin();
             Depto persistentDepto = em.find(Depto.class, depto.getDepDepartamento());
             Area areaareidAreaOld = persistentDepto.getAreaareidArea();
             Area areaareidAreaNew = depto.getAreaareidArea();
@@ -83,17 +85,17 @@ public class DeptoJpaController implements Serializable {
             }
             depto = em.merge(depto);
             if (areaareidAreaOld != null && !areaareidAreaOld.equals(areaareidAreaNew)) {
-                areaareidAreaOld.getDeptoCollection().remove(depto);
+                areaareidAreaOld.getDeptoList().remove(depto);
                 areaareidAreaOld = em.merge(areaareidAreaOld);
             }
             if (areaareidAreaNew != null && !areaareidAreaNew.equals(areaareidAreaOld)) {
-                areaareidAreaNew.getDeptoCollection().add(depto);
+                areaareidAreaNew.getDeptoList().add(depto);
                 areaareidAreaNew = em.merge(areaareidAreaNew);
             }
-            em.getTransaction().commit();
+           
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+               
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -115,8 +117,8 @@ public class DeptoJpaController implements Serializable {
     public void destroy(String id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            
             em = getEntityManager();
-            em.getTransaction().begin();
             Depto depto;
             try {
                 depto = em.getReference(Depto.class, id);
@@ -126,14 +128,14 @@ public class DeptoJpaController implements Serializable {
             }
             Area areaareidArea = depto.getAreaareidArea();
             if (areaareidArea != null) {
-                areaareidArea.getDeptoCollection().remove(depto);
+                areaareidArea.getDeptoList().remove(depto);
                 areaareidArea = em.merge(areaareidArea);
             }
             em.remove(depto);
-            em.getTransaction().commit();
+          
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+               
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }

@@ -7,7 +7,9 @@
 package JPA.Entidades;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -16,20 +18,33 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author madman
+ * @author DELL
  */
 @Entity
 @Table(name = "workstation")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Workstation.findAll", query = "SELECT w FROM Workstation w")})
+    @NamedQuery(name = "Workstation.findAll", query = "SELECT w FROM Workstation w"),
+    @NamedQuery(name = "Workstation.findByIdWorkstation", query = "SELECT w FROM Workstation w WHERE w.idWorkstation = :idWorkstation"),
+    @NamedQuery(name = "Workstation.findByProcesador", query = "SELECT w FROM Workstation w WHERE w.procesador = :procesador"),
+    @NamedQuery(name = "Workstation.findByMemoria", query = "SELECT w FROM Workstation w WHERE w.memoria = :memoria"),
+    @NamedQuery(name = "Workstation.findByDiscoDuro", query = "SELECT w FROM Workstation w WHERE w.discoDuro = :discoDuro"),
+    @NamedQuery(name = "Workstation.findByTarjetaVideo", query = "SELECT w FROM Workstation w WHERE w.tarjetaVideo = :tarjetaVideo"),
+    @NamedQuery(name = "Workstation.findByPuertos", query = "SELECT w FROM Workstation w WHERE w.puertos = :puertos"),
+    @NamedQuery(name = "Workstation.findByResolucionMonitor", query = "SELECT w FROM Workstation w WHERE w.resolucionMonitor = :resolucionMonitor"),
+    @NamedQuery(name = "Workstation.findByUnidadOptica", query = "SELECT w FROM Workstation w WHERE w.unidadOptica = :unidadOptica"),
+    @NamedQuery(name = "Workstation.findByDescripcion", query = "SELECT w FROM Workstation w WHERE w.descripcion = :descripcion"),
+    @NamedQuery(name = "Workstation.findByDireccionIP", query = "SELECT w FROM Workstation w WHERE w.direccionIP = :direccionIP"),
+    @NamedQuery(name = "Workstation.findByArquitectura", query = "SELECT w FROM Workstation w WHERE w.arquitectura = :arquitectura")})
 public class Workstation implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -73,6 +88,8 @@ public class Workstation implements Serializable {
         @JoinColumn(name = "IT_item_it_marca", referencedColumnName = "it_marca")})
     @ManyToOne(optional = false)
     private ItItem itItem;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "workstationidWorkstation")
+    private List<Computadora> computadoraList;
 
     public Workstation() {
     }
@@ -175,6 +192,15 @@ public class Workstation implements Serializable {
 
     public void setItItem(ItItem itItem) {
         this.itItem = itItem;
+    }
+
+    @XmlTransient
+    public List<Computadora> getComputadoraList() {
+        return computadoraList;
+    }
+
+    public void setComputadoraList(List<Computadora> computadoraList) {
+        this.computadoraList = computadoraList;
     }
 
     @Override

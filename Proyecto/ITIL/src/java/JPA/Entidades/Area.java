@@ -7,7 +7,7 @@
 package JPA.Entidades;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -24,13 +24,16 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author madman
+ * @author DELL
  */
 @Entity
 @Table(name = "area")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Area.findAll", query = "SELECT a FROM Area a")})
+    @NamedQuery(name = "Area.findAll", query = "SELECT a FROM Area a"),
+    @NamedQuery(name = "Area.findByAreidArea", query = "SELECT a FROM Area a WHERE a.areidArea = :areidArea"),
+    @NamedQuery(name = "Area.findByAreNombre", query = "SELECT a FROM Area a WHERE a.areNombre = :areNombre"),
+    @NamedQuery(name = "Area.findByAreDespcripcion", query = "SELECT a FROM Area a WHERE a.areDespcripcion = :areDespcripcion")})
 public class Area implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -46,9 +49,9 @@ public class Area implements Serializable {
     @Column(name = "are_despcripcion")
     private String areDespcripcion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "areaareidArea")
-    private Collection<Empleado> empleadoCollection;
+    private List<Empleado> empleadoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "areaareidArea")
-    private Collection<Depto> deptoCollection;
+    private List<Depto> deptoList;
 
     public Area() {
     }
@@ -82,21 +85,21 @@ public class Area implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Empleado> getEmpleadoCollection() {
-        return empleadoCollection;
+    public List<Empleado> getEmpleadoList() {
+        return empleadoList;
     }
 
-    public void setEmpleadoCollection(Collection<Empleado> empleadoCollection) {
-        this.empleadoCollection = empleadoCollection;
+    public void setEmpleadoList(List<Empleado> empleadoList) {
+        this.empleadoList = empleadoList;
     }
 
     @XmlTransient
-    public Collection<Depto> getDeptoCollection() {
-        return deptoCollection;
+    public List<Depto> getDeptoList() {
+        return deptoList;
     }
 
-    public void setDeptoCollection(Collection<Depto> deptoCollection) {
-        this.deptoCollection = deptoCollection;
+    public void setDeptoList(List<Depto> deptoList) {
+        this.deptoList = deptoList;
     }
 
     @Override

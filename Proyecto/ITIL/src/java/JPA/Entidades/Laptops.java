@@ -7,7 +7,9 @@
 package JPA.Entidades;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -16,20 +18,33 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author madman
+ * @author DELL
  */
 @Entity
 @Table(name = "laptops")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Laptops.findAll", query = "SELECT l FROM Laptops l")})
+    @NamedQuery(name = "Laptops.findAll", query = "SELECT l FROM Laptops l"),
+    @NamedQuery(name = "Laptops.findByIdLaptop", query = "SELECT l FROM Laptops l WHERE l.idLaptop = :idLaptop"),
+    @NamedQuery(name = "Laptops.findByProcesador", query = "SELECT l FROM Laptops l WHERE l.procesador = :procesador"),
+    @NamedQuery(name = "Laptops.findByMemoria", query = "SELECT l FROM Laptops l WHERE l.memoria = :memoria"),
+    @NamedQuery(name = "Laptops.findByDuracionBateria", query = "SELECT l FROM Laptops l WHERE l.duracionBateria = :duracionBateria"),
+    @NamedQuery(name = "Laptops.findByDiscoDuro", query = "SELECT l FROM Laptops l WHERE l.discoDuro = :discoDuro"),
+    @NamedQuery(name = "Laptops.findByResolucionPantalla", query = "SELECT l FROM Laptops l WHERE l.resolucionPantalla = :resolucionPantalla"),
+    @NamedQuery(name = "Laptops.findByTarjetaVideo", query = "SELECT l FROM Laptops l WHERE l.tarjetaVideo = :tarjetaVideo"),
+    @NamedQuery(name = "Laptops.findByPuerto", query = "SELECT l FROM Laptops l WHERE l.puerto = :puerto"),
+    @NamedQuery(name = "Laptops.findByDescripcion", query = "SELECT l FROM Laptops l WHERE l.descripcion = :descripcion"),
+    @NamedQuery(name = "Laptops.findByDireccionIP", query = "SELECT l FROM Laptops l WHERE l.direccionIP = :direccionIP"),
+    @NamedQuery(name = "Laptops.findByArquitectura", query = "SELECT l FROM Laptops l WHERE l.arquitectura = :arquitectura")})
 public class Laptops implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -73,6 +88,8 @@ public class Laptops implements Serializable {
         @JoinColumn(name = "IT_item_it_marca", referencedColumnName = "it_marca")})
     @ManyToOne(optional = false)
     private ItItem itItem;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "laptopsidLaptop")
+    private List<Computadora> computadoraList;
 
     public Laptops() {
     }
@@ -175,6 +192,15 @@ public class Laptops implements Serializable {
 
     public void setItItem(ItItem itItem) {
         this.itItem = itItem;
+    }
+
+    @XmlTransient
+    public List<Computadora> getComputadoraList() {
+        return computadoraList;
+    }
+
+    public void setComputadoraList(List<Computadora> computadoraList) {
+        this.computadoraList = computadoraList;
     }
 
     @Override

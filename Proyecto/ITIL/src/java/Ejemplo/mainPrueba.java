@@ -3,8 +3,12 @@ package Ejemplo;
 
 import JPA.Entidades.Area;
 import JPA.Entidades.Lenguaje;
+import JPA.Entidades.Roles;
+import JPA.Entidades.Sucursal;
 import JPA.Entidades_Controllers.AreaJpaController;
 import JPA.Entidades_Controllers.LenguajeJpaController;
+import JPA.Entidades_Controllers.RolesJpaController;
+import JPA.Entidades_Controllers.SucursalJpaController;
 import JPA.Entidades_Controllers.exceptions.RollbackFailureException;
 import java.util.List;
 
@@ -21,12 +25,23 @@ import java.util.List;
 public class mainPrueba {
     public static void main(String[] args) throws RollbackFailureException, Exception{
         
-       AreaJpaController control= new AreaJpaController();//instaciamos la clase controlador
-       Area area=new Area();//instanciamos la clase que contiene los getter an setter para llenar nuestro objeto area
-       
-       area.setAreidArea("100");//llenando el objeto
-       area.setAreNombre("Electronica");
-       area.setAreDespcripcion("Area de Electronica");
-       control.create(area);//mandamos el objeto de tipo Area al metodo del controlador area
+//        SucursalJpaController control= new SucursalJpaController();//instaciamos la clase controlador
+//        Sucursal sucur =new Sucursal();//instanciamos la clase que contiene los getter an setter para llenar nuestro objeto area
+//       
+//       sucur.setSucursalidSucursal(1);
+//       sucur.setSucursalNombre("MEGA");
+//       sucur.setSucursalUbicacion("San Mateo");
+//       sucur.setSucursalObservacion("bodega");
+//       sucur.setSucursalcol("san mateo");
+//       sucur.setSucursalObservacion("todo barato");
+//       control.create(sucur);//mandamos el objeto de tipo Area al metodo del controlador area
+        
+        RolesJpaController controlador =new RolesJpaController();
+        Roles rol=new Roles();
+        rol.setRolidRol("100");
+        rol.setRolNombre("Admin");
+        rol.setRolDescripcion("super usuario");
+        controlador.create(rol);
+        
     }
 }

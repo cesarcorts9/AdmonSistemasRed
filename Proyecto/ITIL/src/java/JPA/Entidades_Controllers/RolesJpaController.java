@@ -17,51 +17,50 @@ import JPA.Entidades_Controllers.exceptions.NonexistentEntityException;
 import JPA.Entidades_Controllers.exceptions.PreexistingEntityException;
 import JPA.Entidades_Controllers.exceptions.RollbackFailureException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.transaction.UserTransaction;
 
 /**
  *
- * @author madman
+ * @author DELL
  */
 public class RolesJpaController implements Serializable {
 
-    public RolesJpaController() {
+    public RolesJpaController(){
     }
-    private EntityManagerFactory emf = null;
+     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    private EntityManager getEntityManager() {
         emf = Persistence.createEntityManagerFactory("It_ITILPU");
         return emf.createEntityManager();
     }
 
-
     public void create(Roles roles) throws PreexistingEntityException, RollbackFailureException, Exception {
-        if (roles.getEmpleadoCollection() == null) {
-            roles.setEmpleadoCollection(new ArrayList<Empleado>());
+        if (roles.getEmpleadoList() == null) {
+            roles.setEmpleadoList(new ArrayList<Empleado>());
         }
         EntityManager em = null;
         try {
+            
             em = getEntityManager();
-            em.getTransaction().begin();
-            Collection<Empleado> attachedEmpleadoCollection = new ArrayList<Empleado>();
-            for (Empleado empleadoCollectionEmpleadoToAttach : roles.getEmpleadoCollection()) {
-                empleadoCollectionEmpleadoToAttach = em.getReference(empleadoCollectionEmpleadoToAttach.getClass(), empleadoCollectionEmpleadoToAttach.getEmpNoEmpleado());
-                attachedEmpleadoCollection.add(empleadoCollectionEmpleadoToAttach);
+            List<Empleado> attachedEmpleadoList = new ArrayList<Empleado>();
+            for (Empleado empleadoListEmpleadoToAttach : roles.getEmpleadoList()) {
+                empleadoListEmpleadoToAttach = em.getReference(empleadoListEmpleadoToAttach.getClass(), empleadoListEmpleadoToAttach.getEmpNoEmpleado());
+                attachedEmpleadoList.add(empleadoListEmpleadoToAttach);
             }
-            roles.setEmpleadoCollection(attachedEmpleadoCollection);
+            roles.setEmpleadoList(attachedEmpleadoList);
             em.persist(roles);
-            for (Empleado empleadoCollectionEmpleado : roles.getEmpleadoCollection()) {
-                empleadoCollectionEmpleado.getRolesCollection().add(roles);
-                empleadoCollectionEmpleado = em.merge(empleadoCollectionEmpleado);
+            for (Empleado empleadoListEmpleado : roles.getEmpleadoList()) {
+                empleadoListEmpleado.getRolesList().add(roles);
+                empleadoListEmpleado = em.merge(empleadoListEmpleado);
             }
-            em.getTransaction().commit();
+            
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+                
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -79,35 +78,35 @@ public class RolesJpaController implements Serializable {
     public void edit(Roles roles) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+           
             em = getEntityManager();
-            em.getTransaction().begin();
             Roles persistentRoles = em.find(Roles.class, roles.getRolidRol());
-            Collection<Empleado> empleadoCollectionOld = persistentRoles.getEmpleadoCollection();
-            Collection<Empleado> empleadoCollectionNew = roles.getEmpleadoCollection();
-            Collection<Empleado> attachedEmpleadoCollectionNew = new ArrayList<Empleado>();
-            for (Empleado empleadoCollectionNewEmpleadoToAttach : empleadoCollectionNew) {
-                empleadoCollectionNewEmpleadoToAttach = em.getReference(empleadoCollectionNewEmpleadoToAttach.getClass(), empleadoCollectionNewEmpleadoToAttach.getEmpNoEmpleado());
-                attachedEmpleadoCollectionNew.add(empleadoCollectionNewEmpleadoToAttach);
+            List<Empleado> empleadoListOld = persistentRoles.getEmpleadoList();
+            List<Empleado> empleadoListNew = roles.getEmpleadoList();
+            List<Empleado> attachedEmpleadoListNew = new ArrayList<Empleado>();
+            for (Empleado empleadoListNewEmpleadoToAttach : empleadoListNew) {
+                empleadoListNewEmpleadoToAttach = em.getReference(empleadoListNewEmpleadoToAttach.getClass(), empleadoListNewEmpleadoToAttach.getEmpNoEmpleado());
+                attachedEmpleadoListNew.add(empleadoListNewEmpleadoToAttach);
             }
-            empleadoCollectionNew = attachedEmpleadoCollectionNew;
-            roles.setEmpleadoCollection(empleadoCollectionNew);
+            empleadoListNew = attachedEmpleadoListNew;
+            roles.setEmpleadoList(empleadoListNew);
             roles = em.merge(roles);
-            for (Empleado empleadoCollectionOldEmpleado : empleadoCollectionOld) {
-                if (!empleadoCollectionNew.contains(empleadoCollectionOldEmpleado)) {
-                    empleadoCollectionOldEmpleado.getRolesCollection().remove(roles);
-                    empleadoCollectionOldEmpleado = em.merge(empleadoCollectionOldEmpleado);
+            for (Empleado empleadoListOldEmpleado : empleadoListOld) {
+                if (!empleadoListNew.contains(empleadoListOldEmpleado)) {
+                    empleadoListOldEmpleado.getRolesList().remove(roles);
+                    empleadoListOldEmpleado = em.merge(empleadoListOldEmpleado);
                 }
             }
-            for (Empleado empleadoCollectionNewEmpleado : empleadoCollectionNew) {
-                if (!empleadoCollectionOld.contains(empleadoCollectionNewEmpleado)) {
-                    empleadoCollectionNewEmpleado.getRolesCollection().add(roles);
-                    empleadoCollectionNewEmpleado = em.merge(empleadoCollectionNewEmpleado);
+            for (Empleado empleadoListNewEmpleado : empleadoListNew) {
+                if (!empleadoListOld.contains(empleadoListNewEmpleado)) {
+                    empleadoListNewEmpleado.getRolesList().add(roles);
+                    empleadoListNewEmpleado = em.merge(empleadoListNewEmpleado);
                 }
             }
-            em.getTransaction().commit();
+           
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+                
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -129,8 +128,8 @@ public class RolesJpaController implements Serializable {
     public void destroy(String id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            
             em = getEntityManager();
-            em.getTransaction().begin();
             Roles roles;
             try {
                 roles = em.getReference(Roles.class, id);
@@ -138,16 +137,16 @@ public class RolesJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The roles with id " + id + " no longer exists.", enfe);
             }
-            Collection<Empleado> empleadoCollection = roles.getEmpleadoCollection();
-            for (Empleado empleadoCollectionEmpleado : empleadoCollection) {
-                empleadoCollectionEmpleado.getRolesCollection().remove(roles);
-                empleadoCollectionEmpleado = em.merge(empleadoCollectionEmpleado);
+            List<Empleado> empleadoList = roles.getEmpleadoList();
+            for (Empleado empleadoListEmpleado : empleadoList) {
+                empleadoListEmpleado.getRolesList().remove(roles);
+                empleadoListEmpleado = em.merge(empleadoListEmpleado);
             }
             em.remove(roles);
-            em.getTransaction().commit();
+            
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+               
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }

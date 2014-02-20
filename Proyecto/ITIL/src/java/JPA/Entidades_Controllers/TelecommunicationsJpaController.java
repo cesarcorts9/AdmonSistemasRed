@@ -20,18 +20,19 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.transaction.UserTransaction;
 
 /**
  *
- * @author madman
+ * @author DELL
  */
 public class TelecommunicationsJpaController implements Serializable {
 
-    public TelecommunicationsJpaController() {
-   }
-    private EntityManagerFactory emf = null;
+    public TelecommunicationsJpaController(){
+    }
+     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    private EntityManager getEntityManager() {
         emf = Persistence.createEntityManagerFactory("It_ITILPU");
         return emf.createEntityManager();
     }
@@ -39,8 +40,8 @@ public class TelecommunicationsJpaController implements Serializable {
     public void create(Telecommunications telecommunications) throws PreexistingEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            
             em = getEntityManager();
-            em.getTransaction().begin();
             ItItem itItem = telecommunications.getItItem();
             if (itItem != null) {
                 itItem = em.getReference(itItem.getClass(), itItem.getItItemPK());
@@ -48,13 +49,13 @@ public class TelecommunicationsJpaController implements Serializable {
             }
             em.persist(telecommunications);
             if (itItem != null) {
-                itItem.getTelecommunicationsCollection().add(telecommunications);
+                itItem.getTelecommunicationsList().add(telecommunications);
                 itItem = em.merge(itItem);
             }
-            em.getTransaction().commit();
+            
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+                
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -72,8 +73,8 @@ public class TelecommunicationsJpaController implements Serializable {
     public void edit(Telecommunications telecommunications) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+             
             em = getEntityManager();
-            em.getTransaction().begin();
             Telecommunications persistentTelecommunications = em.find(Telecommunications.class, telecommunications.getIdTelecom());
             ItItem itItemOld = persistentTelecommunications.getItItem();
             ItItem itItemNew = telecommunications.getItItem();
@@ -83,17 +84,17 @@ public class TelecommunicationsJpaController implements Serializable {
             }
             telecommunications = em.merge(telecommunications);
             if (itItemOld != null && !itItemOld.equals(itItemNew)) {
-                itItemOld.getTelecommunicationsCollection().remove(telecommunications);
+                itItemOld.getTelecommunicationsList().remove(telecommunications);
                 itItemOld = em.merge(itItemOld);
             }
             if (itItemNew != null && !itItemNew.equals(itItemOld)) {
-                itItemNew.getTelecommunicationsCollection().add(telecommunications);
+                itItemNew.getTelecommunicationsList().add(telecommunications);
                 itItemNew = em.merge(itItemNew);
             }
-            em.getTransaction().commit();
+           
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+                
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -115,8 +116,8 @@ public class TelecommunicationsJpaController implements Serializable {
     public void destroy(String id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+             
             em = getEntityManager();
-            em.getTransaction().begin();
             Telecommunications telecommunications;
             try {
                 telecommunications = em.getReference(Telecommunications.class, id);
@@ -126,14 +127,14 @@ public class TelecommunicationsJpaController implements Serializable {
             }
             ItItem itItem = telecommunications.getItItem();
             if (itItem != null) {
-                itItem.getTelecommunicationsCollection().remove(telecommunications);
+                itItem.getTelecommunicationsList().remove(telecommunications);
                 itItem = em.merge(itItem);
             }
             em.remove(telecommunications);
-            em.getTransaction().commit();
+           
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+                
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }

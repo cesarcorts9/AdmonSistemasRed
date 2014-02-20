@@ -7,12 +7,15 @@
 package JPA.Entidades;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -20,16 +23,24 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author madman
+ * @author DELL
  */
 @Entity
 @Table(name = "software")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Software.findAll", query = "SELECT s FROM Software s")})
+    @NamedQuery(name = "Software.findAll", query = "SELECT s FROM Software s"),
+    @NamedQuery(name = "Software.findByIdSoftware", query = "SELECT s FROM Software s WHERE s.idSoftware = :idSoftware"),
+    @NamedQuery(name = "Software.findByNombreSoftware", query = "SELECT s FROM Software s WHERE s.nombreSoftware = :nombreSoftware"),
+    @NamedQuery(name = "Software.findByLicencia", query = "SELECT s FROM Software s WHERE s.licencia = :licencia"),
+    @NamedQuery(name = "Software.findByCantidadUsuarios", query = "SELECT s FROM Software s WHERE s.cantidadUsuarios = :cantidadUsuarios"),
+    @NamedQuery(name = "Software.findByVersion", query = "SELECT s FROM Software s WHERE s.version = :version"),
+    @NamedQuery(name = "Software.findByDescripcion", query = "SELECT s FROM Software s WHERE s.descripcion = :descripcion"),
+    @NamedQuery(name = "Software.findByArquitectura", query = "SELECT s FROM Software s WHERE s.arquitectura = :arquitectura")})
 public class Software implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -56,6 +67,11 @@ public class Software implements Serializable {
     @Size(max = 45)
     @Column(name = "arquitectura")
     private String arquitectura;
+    @JoinTable(name = "software_has_computadora", joinColumns = {
+        @JoinColumn(name = "Software_idSoftware", referencedColumnName = "idSoftware")}, inverseJoinColumns = {
+        @JoinColumn(name = "Computadora_idComputadora", referencedColumnName = "idComputadora")})
+    @ManyToMany
+    private List<Computadora> computadoraList;
     @JoinColumns({
         @JoinColumn(name = "IT_item_it_serie", referencedColumnName = "it_serie"),
         @JoinColumn(name = "IT_item_it_marca", referencedColumnName = "it_marca")})
@@ -123,6 +139,15 @@ public class Software implements Serializable {
 
     public void setArquitectura(String arquitectura) {
         this.arquitectura = arquitectura;
+    }
+
+    @XmlTransient
+    public List<Computadora> getComputadoraList() {
+        return computadoraList;
+    }
+
+    public void setComputadoraList(List<Computadora> computadoraList) {
+        this.computadoraList = computadoraList;
     }
 
     public ItItem getItItem() {

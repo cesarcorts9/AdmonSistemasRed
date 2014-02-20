@@ -7,7 +7,7 @@
 package JPA.Entidades;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,13 +23,15 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author madman
+ * @author DELL
  */
 @Entity
 @Table(name = "lenguaje")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Lenguaje.findAll", query = "SELECT l FROM Lenguaje l")})
+    @NamedQuery(name = "Lenguaje.findAll", query = "SELECT l FROM Lenguaje l"),
+    @NamedQuery(name = "Lenguaje.findByLenLenguaje", query = "SELECT l FROM Lenguaje l WHERE l.lenLenguaje = :lenLenguaje"),
+    @NamedQuery(name = "Lenguaje.findByLenNombre", query = "SELECT l FROM Lenguaje l WHERE l.lenNombre = :lenNombre")})
 public class Lenguaje implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -41,8 +43,8 @@ public class Lenguaje implements Serializable {
     @Size(max = 45)
     @Column(name = "len_nombre")
     private String lenNombre;
-    @ManyToMany(mappedBy = "lenguajeCollection")
-    private Collection<Empleado> empleadoCollection;
+    @ManyToMany(mappedBy = "lenguajeList")
+    private List<Empleado> empleadoList;
 
     public Lenguaje() {
     }
@@ -68,12 +70,12 @@ public class Lenguaje implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Empleado> getEmpleadoCollection() {
-        return empleadoCollection;
+    public List<Empleado> getEmpleadoList() {
+        return empleadoList;
     }
 
-    public void setEmpleadoCollection(Collection<Empleado> empleadoCollection) {
-        this.empleadoCollection = empleadoCollection;
+    public void setEmpleadoList(List<Empleado> empleadoList) {
+        this.empleadoList = empleadoList;
     }
 
     @Override

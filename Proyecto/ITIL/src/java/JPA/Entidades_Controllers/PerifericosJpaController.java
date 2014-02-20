@@ -20,26 +20,29 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.transaction.UserTransaction;
 
 /**
  *
- * @author madman
+ * @author DELL
  */
 public class PerifericosJpaController implements Serializable {
 
-    public PerifericosJpaController() {
+    public PerifericosJpaController(){
+    
     }
-    private EntityManagerFactory emf = null;
+     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    private EntityManager getEntityManager() {
         emf = Persistence.createEntityManagerFactory("It_ITILPU");
         return emf.createEntityManager();
     }
+
     public void create(Perifericos perifericos) throws PreexistingEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            
             em = getEntityManager();
-            em.getTransaction().begin();
             ItItem itItem = perifericos.getItItem();
             if (itItem != null) {
                 itItem = em.getReference(itItem.getClass(), itItem.getItItemPK());
@@ -47,13 +50,13 @@ public class PerifericosJpaController implements Serializable {
             }
             em.persist(perifericos);
             if (itItem != null) {
-                itItem.getPerifericosCollection().add(perifericos);
+                itItem.getPerifericosList().add(perifericos);
                 itItem = em.merge(itItem);
             }
-            em.getTransaction().commit();
+            
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+                
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -71,8 +74,8 @@ public class PerifericosJpaController implements Serializable {
     public void edit(Perifericos perifericos) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            
             em = getEntityManager();
-            em.getTransaction().begin();
             Perifericos persistentPerifericos = em.find(Perifericos.class, perifericos.getIdPeriferico());
             ItItem itItemOld = persistentPerifericos.getItItem();
             ItItem itItemNew = perifericos.getItItem();
@@ -82,17 +85,17 @@ public class PerifericosJpaController implements Serializable {
             }
             perifericos = em.merge(perifericos);
             if (itItemOld != null && !itItemOld.equals(itItemNew)) {
-                itItemOld.getPerifericosCollection().remove(perifericos);
+                itItemOld.getPerifericosList().remove(perifericos);
                 itItemOld = em.merge(itItemOld);
             }
             if (itItemNew != null && !itItemNew.equals(itItemOld)) {
-                itItemNew.getPerifericosCollection().add(perifericos);
+                itItemNew.getPerifericosList().add(perifericos);
                 itItemNew = em.merge(itItemNew);
             }
-            em.getTransaction().commit();
+            
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+                
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -114,8 +117,8 @@ public class PerifericosJpaController implements Serializable {
     public void destroy(String id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+           
             em = getEntityManager();
-            em.getTransaction().begin();
             Perifericos perifericos;
             try {
                 perifericos = em.getReference(Perifericos.class, id);
@@ -125,14 +128,14 @@ public class PerifericosJpaController implements Serializable {
             }
             ItItem itItem = perifericos.getItItem();
             if (itItem != null) {
-                itItem.getPerifericosCollection().remove(perifericos);
+                itItem.getPerifericosList().remove(perifericos);
                 itItem = em.merge(itItem);
             }
             em.remove(perifericos);
-            em.getTransaction().commit();
+            
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+                
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }

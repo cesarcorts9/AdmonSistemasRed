@@ -7,13 +7,11 @@
 package JPA.Entidades;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -25,13 +23,16 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author madman
+ * @author DELL
  */
 @Entity
 @Table(name = "it_item")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "ItItem.findAll", query = "SELECT i FROM ItItem i")})
+    @NamedQuery(name = "ItItem.findAll", query = "SELECT i FROM ItItem i"),
+    @NamedQuery(name = "ItItem.findByItSerie", query = "SELECT i FROM ItItem i WHERE i.itItemPK.itSerie = :itSerie"),
+    @NamedQuery(name = "ItItem.findByItMarca", query = "SELECT i FROM ItItem i WHERE i.itItemPK.itMarca = :itMarca"),
+    @NamedQuery(name = "ItItem.findByModelo", query = "SELECT i FROM ItItem i WHERE i.modelo = :modelo")})
 public class ItItem implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -39,24 +40,20 @@ public class ItItem implements Serializable {
     @Size(max = 45)
     @Column(name = "modelo")
     private String modelo;
-    @JoinTable(name = "it_item_has_empleado", joinColumns = {
-        @JoinColumn(name = "IT_item_it_serie", referencedColumnName = "it_serie"),
-        @JoinColumn(name = "IT_item_it_marca", referencedColumnName = "it_marca")}, inverseJoinColumns = {
-        @JoinColumn(name = "empleado_emp_NoEmpleado", referencedColumnName = "emp_NoEmpleado")})
-    @ManyToMany
-    private Collection<Empleado> empleadoCollection;
+    @ManyToMany(mappedBy = "itItemList")
+    private List<Empleado> empleadoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "itItem")
-    private Collection<Servidor> servidorCollection;
+    private List<Laptops> laptopsList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "itItem")
-    private Collection<Software> softwareCollection;
+    private List<Workstation> workstationList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "itItem")
-    private Collection<Telecommunications> telecommunicationsCollection;
+    private List<Telecommunications> telecommunicationsList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "itItem")
-    private Collection<Perifericos> perifericosCollection;
+    private List<Software> softwareList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "itItem")
-    private Collection<Laptops> laptopsCollection;
+    private List<Servidor> servidorList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "itItem")
-    private Collection<Workstation> workstationCollection;
+    private List<Perifericos> perifericosList;
 
     public ItItem() {
     }
@@ -86,66 +83,66 @@ public class ItItem implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Empleado> getEmpleadoCollection() {
-        return empleadoCollection;
+    public List<Empleado> getEmpleadoList() {
+        return empleadoList;
     }
 
-    public void setEmpleadoCollection(Collection<Empleado> empleadoCollection) {
-        this.empleadoCollection = empleadoCollection;
-    }
-
-    @XmlTransient
-    public Collection<Servidor> getServidorCollection() {
-        return servidorCollection;
-    }
-
-    public void setServidorCollection(Collection<Servidor> servidorCollection) {
-        this.servidorCollection = servidorCollection;
+    public void setEmpleadoList(List<Empleado> empleadoList) {
+        this.empleadoList = empleadoList;
     }
 
     @XmlTransient
-    public Collection<Software> getSoftwareCollection() {
-        return softwareCollection;
+    public List<Laptops> getLaptopsList() {
+        return laptopsList;
     }
 
-    public void setSoftwareCollection(Collection<Software> softwareCollection) {
-        this.softwareCollection = softwareCollection;
-    }
-
-    @XmlTransient
-    public Collection<Telecommunications> getTelecommunicationsCollection() {
-        return telecommunicationsCollection;
-    }
-
-    public void setTelecommunicationsCollection(Collection<Telecommunications> telecommunicationsCollection) {
-        this.telecommunicationsCollection = telecommunicationsCollection;
+    public void setLaptopsList(List<Laptops> laptopsList) {
+        this.laptopsList = laptopsList;
     }
 
     @XmlTransient
-    public Collection<Perifericos> getPerifericosCollection() {
-        return perifericosCollection;
+    public List<Workstation> getWorkstationList() {
+        return workstationList;
     }
 
-    public void setPerifericosCollection(Collection<Perifericos> perifericosCollection) {
-        this.perifericosCollection = perifericosCollection;
-    }
-
-    @XmlTransient
-    public Collection<Laptops> getLaptopsCollection() {
-        return laptopsCollection;
-    }
-
-    public void setLaptopsCollection(Collection<Laptops> laptopsCollection) {
-        this.laptopsCollection = laptopsCollection;
+    public void setWorkstationList(List<Workstation> workstationList) {
+        this.workstationList = workstationList;
     }
 
     @XmlTransient
-    public Collection<Workstation> getWorkstationCollection() {
-        return workstationCollection;
+    public List<Telecommunications> getTelecommunicationsList() {
+        return telecommunicationsList;
     }
 
-    public void setWorkstationCollection(Collection<Workstation> workstationCollection) {
-        this.workstationCollection = workstationCollection;
+    public void setTelecommunicationsList(List<Telecommunications> telecommunicationsList) {
+        this.telecommunicationsList = telecommunicationsList;
+    }
+
+    @XmlTransient
+    public List<Software> getSoftwareList() {
+        return softwareList;
+    }
+
+    public void setSoftwareList(List<Software> softwareList) {
+        this.softwareList = softwareList;
+    }
+
+    @XmlTransient
+    public List<Servidor> getServidorList() {
+        return servidorList;
+    }
+
+    public void setServidorList(List<Servidor> servidorList) {
+        this.servidorList = servidorList;
+    }
+
+    @XmlTransient
+    public List<Perifericos> getPerifericosList() {
+        return perifericosList;
+    }
+
+    public void setPerifericosList(List<Perifericos> perifericosList) {
+        this.perifericosList = perifericosList;
     }
 
     @Override

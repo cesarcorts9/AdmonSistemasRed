@@ -15,90 +15,91 @@ import JPA.Entidades.Area;
 import JPA.Entidades.Empleado;
 import JPA.Entidades.Lenguaje;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import JPA.Entidades.Roles;
 import JPA.Entidades.ItItem;
 import JPA.Entidades_Controllers.exceptions.NonexistentEntityException;
 import JPA.Entidades_Controllers.exceptions.PreexistingEntityException;
 import JPA.Entidades_Controllers.exceptions.RollbackFailureException;
-import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.transaction.UserTransaction;
 
 /**
  *
- * @author madman
+ * @author DELL
  */
 public class EmpleadoJpaController implements Serializable {
 
     public EmpleadoJpaController() {
+        
     }
-    private EntityManagerFactory emf = null;
+     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    private EntityManager getEntityManager() {
         emf = Persistence.createEntityManagerFactory("It_ITILPU");
         return emf.createEntityManager();
     }
 
     public void create(Empleado empleado) throws PreexistingEntityException, RollbackFailureException, Exception {
-        if (empleado.getLenguajeCollection() == null) {
-            empleado.setLenguajeCollection(new ArrayList<Lenguaje>());
+        if (empleado.getLenguajeList() == null) {
+            empleado.setLenguajeList(new ArrayList<Lenguaje>());
         }
-        if (empleado.getRolesCollection() == null) {
-            empleado.setRolesCollection(new ArrayList<Roles>());
+        if (empleado.getRolesList() == null) {
+            empleado.setRolesList(new ArrayList<Roles>());
         }
-        if (empleado.getItItemCollection() == null) {
-            empleado.setItItemCollection(new ArrayList<ItItem>());
+        if (empleado.getItItemList() == null) {
+            empleado.setItItemList(new ArrayList<ItItem>());
         }
         EntityManager em = null;
         try {
+            
             em = getEntityManager();
-            em.getTransaction().begin();
             Area areaareidArea = empleado.getAreaareidArea();
             if (areaareidArea != null) {
                 areaareidArea = em.getReference(areaareidArea.getClass(), areaareidArea.getAreidArea());
                 empleado.setAreaareidArea(areaareidArea);
             }
-            Collection<Lenguaje> attachedLenguajeCollection = new ArrayList<Lenguaje>();
-            for (Lenguaje lenguajeCollectionLenguajeToAttach : empleado.getLenguajeCollection()) {
-                lenguajeCollectionLenguajeToAttach = em.getReference(lenguajeCollectionLenguajeToAttach.getClass(), lenguajeCollectionLenguajeToAttach.getLenLenguaje());
-                attachedLenguajeCollection.add(lenguajeCollectionLenguajeToAttach);
+            List<Lenguaje> attachedLenguajeList = new ArrayList<Lenguaje>();
+            for (Lenguaje lenguajeListLenguajeToAttach : empleado.getLenguajeList()) {
+                lenguajeListLenguajeToAttach = em.getReference(lenguajeListLenguajeToAttach.getClass(), lenguajeListLenguajeToAttach.getLenLenguaje());
+                attachedLenguajeList.add(lenguajeListLenguajeToAttach);
             }
-            empleado.setLenguajeCollection(attachedLenguajeCollection);
-            Collection<Roles> attachedRolesCollection = new ArrayList<Roles>();
-            for (Roles rolesCollectionRolesToAttach : empleado.getRolesCollection()) {
-                rolesCollectionRolesToAttach = em.getReference(rolesCollectionRolesToAttach.getClass(), rolesCollectionRolesToAttach.getRolidRol());
-                attachedRolesCollection.add(rolesCollectionRolesToAttach);
+            empleado.setLenguajeList(attachedLenguajeList);
+            List<Roles> attachedRolesList = new ArrayList<Roles>();
+            for (Roles rolesListRolesToAttach : empleado.getRolesList()) {
+                rolesListRolesToAttach = em.getReference(rolesListRolesToAttach.getClass(), rolesListRolesToAttach.getRolidRol());
+                attachedRolesList.add(rolesListRolesToAttach);
             }
-            empleado.setRolesCollection(attachedRolesCollection);
-            Collection<ItItem> attachedItItemCollection = new ArrayList<ItItem>();
-            for (ItItem itItemCollectionItItemToAttach : empleado.getItItemCollection()) {
-                itItemCollectionItItemToAttach = em.getReference(itItemCollectionItItemToAttach.getClass(), itItemCollectionItItemToAttach.getItItemPK());
-                attachedItItemCollection.add(itItemCollectionItItemToAttach);
+            empleado.setRolesList(attachedRolesList);
+            List<ItItem> attachedItItemList = new ArrayList<ItItem>();
+            for (ItItem itItemListItItemToAttach : empleado.getItItemList()) {
+                itItemListItItemToAttach = em.getReference(itItemListItItemToAttach.getClass(), itItemListItItemToAttach.getItItemPK());
+                attachedItItemList.add(itItemListItItemToAttach);
             }
-            empleado.setItItemCollection(attachedItItemCollection);
+            empleado.setItItemList(attachedItItemList);
             em.persist(empleado);
             if (areaareidArea != null) {
-                areaareidArea.getEmpleadoCollection().add(empleado);
+                areaareidArea.getEmpleadoList().add(empleado);
                 areaareidArea = em.merge(areaareidArea);
             }
-            for (Lenguaje lenguajeCollectionLenguaje : empleado.getLenguajeCollection()) {
-                lenguajeCollectionLenguaje.getEmpleadoCollection().add(empleado);
-                lenguajeCollectionLenguaje = em.merge(lenguajeCollectionLenguaje);
+            for (Lenguaje lenguajeListLenguaje : empleado.getLenguajeList()) {
+                lenguajeListLenguaje.getEmpleadoList().add(empleado);
+                lenguajeListLenguaje = em.merge(lenguajeListLenguaje);
             }
-            for (Roles rolesCollectionRoles : empleado.getRolesCollection()) {
-                rolesCollectionRoles.getEmpleadoCollection().add(empleado);
-                rolesCollectionRoles = em.merge(rolesCollectionRoles);
+            for (Roles rolesListRoles : empleado.getRolesList()) {
+                rolesListRoles.getEmpleadoList().add(empleado);
+                rolesListRoles = em.merge(rolesListRoles);
             }
-            for (ItItem itItemCollectionItItem : empleado.getItItemCollection()) {
-                itItemCollectionItItem.getEmpleadoCollection().add(empleado);
-                itItemCollectionItItem = em.merge(itItemCollectionItItem);
+            for (ItItem itItemListItItem : empleado.getItItemList()) {
+                itItemListItItem.getEmpleadoList().add(empleado);
+                itItemListItItem = em.merge(itItemListItItem);
             }
-            em.getTransaction().commit();
+           
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+                
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -116,91 +117,91 @@ public class EmpleadoJpaController implements Serializable {
     public void edit(Empleado empleado) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+           
             em = getEntityManager();
-            em.getTransaction().begin();
             Empleado persistentEmpleado = em.find(Empleado.class, empleado.getEmpNoEmpleado());
             Area areaareidAreaOld = persistentEmpleado.getAreaareidArea();
             Area areaareidAreaNew = empleado.getAreaareidArea();
-            Collection<Lenguaje> lenguajeCollectionOld = persistentEmpleado.getLenguajeCollection();
-            Collection<Lenguaje> lenguajeCollectionNew = empleado.getLenguajeCollection();
-            Collection<Roles> rolesCollectionOld = persistentEmpleado.getRolesCollection();
-            Collection<Roles> rolesCollectionNew = empleado.getRolesCollection();
-            Collection<ItItem> itItemCollectionOld = persistentEmpleado.getItItemCollection();
-            Collection<ItItem> itItemCollectionNew = empleado.getItItemCollection();
+            List<Lenguaje> lenguajeListOld = persistentEmpleado.getLenguajeList();
+            List<Lenguaje> lenguajeListNew = empleado.getLenguajeList();
+            List<Roles> rolesListOld = persistentEmpleado.getRolesList();
+            List<Roles> rolesListNew = empleado.getRolesList();
+            List<ItItem> itItemListOld = persistentEmpleado.getItItemList();
+            List<ItItem> itItemListNew = empleado.getItItemList();
             if (areaareidAreaNew != null) {
                 areaareidAreaNew = em.getReference(areaareidAreaNew.getClass(), areaareidAreaNew.getAreidArea());
                 empleado.setAreaareidArea(areaareidAreaNew);
             }
-            Collection<Lenguaje> attachedLenguajeCollectionNew = new ArrayList<Lenguaje>();
-            for (Lenguaje lenguajeCollectionNewLenguajeToAttach : lenguajeCollectionNew) {
-                lenguajeCollectionNewLenguajeToAttach = em.getReference(lenguajeCollectionNewLenguajeToAttach.getClass(), lenguajeCollectionNewLenguajeToAttach.getLenLenguaje());
-                attachedLenguajeCollectionNew.add(lenguajeCollectionNewLenguajeToAttach);
+            List<Lenguaje> attachedLenguajeListNew = new ArrayList<Lenguaje>();
+            for (Lenguaje lenguajeListNewLenguajeToAttach : lenguajeListNew) {
+                lenguajeListNewLenguajeToAttach = em.getReference(lenguajeListNewLenguajeToAttach.getClass(), lenguajeListNewLenguajeToAttach.getLenLenguaje());
+                attachedLenguajeListNew.add(lenguajeListNewLenguajeToAttach);
             }
-            lenguajeCollectionNew = attachedLenguajeCollectionNew;
-            empleado.setLenguajeCollection(lenguajeCollectionNew);
-            Collection<Roles> attachedRolesCollectionNew = new ArrayList<Roles>();
-            for (Roles rolesCollectionNewRolesToAttach : rolesCollectionNew) {
-                rolesCollectionNewRolesToAttach = em.getReference(rolesCollectionNewRolesToAttach.getClass(), rolesCollectionNewRolesToAttach.getRolidRol());
-                attachedRolesCollectionNew.add(rolesCollectionNewRolesToAttach);
+            lenguajeListNew = attachedLenguajeListNew;
+            empleado.setLenguajeList(lenguajeListNew);
+            List<Roles> attachedRolesListNew = new ArrayList<Roles>();
+            for (Roles rolesListNewRolesToAttach : rolesListNew) {
+                rolesListNewRolesToAttach = em.getReference(rolesListNewRolesToAttach.getClass(), rolesListNewRolesToAttach.getRolidRol());
+                attachedRolesListNew.add(rolesListNewRolesToAttach);
             }
-            rolesCollectionNew = attachedRolesCollectionNew;
-            empleado.setRolesCollection(rolesCollectionNew);
-            Collection<ItItem> attachedItItemCollectionNew = new ArrayList<ItItem>();
-            for (ItItem itItemCollectionNewItItemToAttach : itItemCollectionNew) {
-                itItemCollectionNewItItemToAttach = em.getReference(itItemCollectionNewItItemToAttach.getClass(), itItemCollectionNewItItemToAttach.getItItemPK());
-                attachedItItemCollectionNew.add(itItemCollectionNewItItemToAttach);
+            rolesListNew = attachedRolesListNew;
+            empleado.setRolesList(rolesListNew);
+            List<ItItem> attachedItItemListNew = new ArrayList<ItItem>();
+            for (ItItem itItemListNewItItemToAttach : itItemListNew) {
+                itItemListNewItItemToAttach = em.getReference(itItemListNewItItemToAttach.getClass(), itItemListNewItItemToAttach.getItItemPK());
+                attachedItItemListNew.add(itItemListNewItItemToAttach);
             }
-            itItemCollectionNew = attachedItItemCollectionNew;
-            empleado.setItItemCollection(itItemCollectionNew);
+            itItemListNew = attachedItItemListNew;
+            empleado.setItItemList(itItemListNew);
             empleado = em.merge(empleado);
             if (areaareidAreaOld != null && !areaareidAreaOld.equals(areaareidAreaNew)) {
-                areaareidAreaOld.getEmpleadoCollection().remove(empleado);
+                areaareidAreaOld.getEmpleadoList().remove(empleado);
                 areaareidAreaOld = em.merge(areaareidAreaOld);
             }
             if (areaareidAreaNew != null && !areaareidAreaNew.equals(areaareidAreaOld)) {
-                areaareidAreaNew.getEmpleadoCollection().add(empleado);
+                areaareidAreaNew.getEmpleadoList().add(empleado);
                 areaareidAreaNew = em.merge(areaareidAreaNew);
             }
-            for (Lenguaje lenguajeCollectionOldLenguaje : lenguajeCollectionOld) {
-                if (!lenguajeCollectionNew.contains(lenguajeCollectionOldLenguaje)) {
-                    lenguajeCollectionOldLenguaje.getEmpleadoCollection().remove(empleado);
-                    lenguajeCollectionOldLenguaje = em.merge(lenguajeCollectionOldLenguaje);
+            for (Lenguaje lenguajeListOldLenguaje : lenguajeListOld) {
+                if (!lenguajeListNew.contains(lenguajeListOldLenguaje)) {
+                    lenguajeListOldLenguaje.getEmpleadoList().remove(empleado);
+                    lenguajeListOldLenguaje = em.merge(lenguajeListOldLenguaje);
                 }
             }
-            for (Lenguaje lenguajeCollectionNewLenguaje : lenguajeCollectionNew) {
-                if (!lenguajeCollectionOld.contains(lenguajeCollectionNewLenguaje)) {
-                    lenguajeCollectionNewLenguaje.getEmpleadoCollection().add(empleado);
-                    lenguajeCollectionNewLenguaje = em.merge(lenguajeCollectionNewLenguaje);
+            for (Lenguaje lenguajeListNewLenguaje : lenguajeListNew) {
+                if (!lenguajeListOld.contains(lenguajeListNewLenguaje)) {
+                    lenguajeListNewLenguaje.getEmpleadoList().add(empleado);
+                    lenguajeListNewLenguaje = em.merge(lenguajeListNewLenguaje);
                 }
             }
-            for (Roles rolesCollectionOldRoles : rolesCollectionOld) {
-                if (!rolesCollectionNew.contains(rolesCollectionOldRoles)) {
-                    rolesCollectionOldRoles.getEmpleadoCollection().remove(empleado);
-                    rolesCollectionOldRoles = em.merge(rolesCollectionOldRoles);
+            for (Roles rolesListOldRoles : rolesListOld) {
+                if (!rolesListNew.contains(rolesListOldRoles)) {
+                    rolesListOldRoles.getEmpleadoList().remove(empleado);
+                    rolesListOldRoles = em.merge(rolesListOldRoles);
                 }
             }
-            for (Roles rolesCollectionNewRoles : rolesCollectionNew) {
-                if (!rolesCollectionOld.contains(rolesCollectionNewRoles)) {
-                    rolesCollectionNewRoles.getEmpleadoCollection().add(empleado);
-                    rolesCollectionNewRoles = em.merge(rolesCollectionNewRoles);
+            for (Roles rolesListNewRoles : rolesListNew) {
+                if (!rolesListOld.contains(rolesListNewRoles)) {
+                    rolesListNewRoles.getEmpleadoList().add(empleado);
+                    rolesListNewRoles = em.merge(rolesListNewRoles);
                 }
             }
-            for (ItItem itItemCollectionOldItItem : itItemCollectionOld) {
-                if (!itItemCollectionNew.contains(itItemCollectionOldItItem)) {
-                    itItemCollectionOldItItem.getEmpleadoCollection().remove(empleado);
-                    itItemCollectionOldItItem = em.merge(itItemCollectionOldItItem);
+            for (ItItem itItemListOldItItem : itItemListOld) {
+                if (!itItemListNew.contains(itItemListOldItItem)) {
+                    itItemListOldItItem.getEmpleadoList().remove(empleado);
+                    itItemListOldItItem = em.merge(itItemListOldItItem);
                 }
             }
-            for (ItItem itItemCollectionNewItItem : itItemCollectionNew) {
-                if (!itItemCollectionOld.contains(itItemCollectionNewItItem)) {
-                    itItemCollectionNewItItem.getEmpleadoCollection().add(empleado);
-                    itItemCollectionNewItItem = em.merge(itItemCollectionNewItItem);
+            for (ItItem itItemListNewItItem : itItemListNew) {
+                if (!itItemListOld.contains(itItemListNewItItem)) {
+                    itItemListNewItItem.getEmpleadoList().add(empleado);
+                    itItemListNewItItem = em.merge(itItemListNewItItem);
                 }
             }
-            em.getTransaction().commit();
+           
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+                
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -222,8 +223,8 @@ public class EmpleadoJpaController implements Serializable {
     public void destroy(String id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+           
             em = getEntityManager();
-            em.getTransaction().begin();
             Empleado empleado;
             try {
                 empleado = em.getReference(Empleado.class, id);
@@ -233,29 +234,29 @@ public class EmpleadoJpaController implements Serializable {
             }
             Area areaareidArea = empleado.getAreaareidArea();
             if (areaareidArea != null) {
-                areaareidArea.getEmpleadoCollection().remove(empleado);
+                areaareidArea.getEmpleadoList().remove(empleado);
                 areaareidArea = em.merge(areaareidArea);
             }
-            Collection<Lenguaje> lenguajeCollection = empleado.getLenguajeCollection();
-            for (Lenguaje lenguajeCollectionLenguaje : lenguajeCollection) {
-                lenguajeCollectionLenguaje.getEmpleadoCollection().remove(empleado);
-                lenguajeCollectionLenguaje = em.merge(lenguajeCollectionLenguaje);
+            List<Lenguaje> lenguajeList = empleado.getLenguajeList();
+            for (Lenguaje lenguajeListLenguaje : lenguajeList) {
+                lenguajeListLenguaje.getEmpleadoList().remove(empleado);
+                lenguajeListLenguaje = em.merge(lenguajeListLenguaje);
             }
-            Collection<Roles> rolesCollection = empleado.getRolesCollection();
-            for (Roles rolesCollectionRoles : rolesCollection) {
-                rolesCollectionRoles.getEmpleadoCollection().remove(empleado);
-                rolesCollectionRoles = em.merge(rolesCollectionRoles);
+            List<Roles> rolesList = empleado.getRolesList();
+            for (Roles rolesListRoles : rolesList) {
+                rolesListRoles.getEmpleadoList().remove(empleado);
+                rolesListRoles = em.merge(rolesListRoles);
             }
-            Collection<ItItem> itItemCollection = empleado.getItItemCollection();
-            for (ItItem itItemCollectionItItem : itItemCollection) {
-                itItemCollectionItItem.getEmpleadoCollection().remove(empleado);
-                itItemCollectionItItem = em.merge(itItemCollectionItItem);
+            List<ItItem> itItemList = empleado.getItItemList();
+            for (ItItem itItemListItItem : itItemList) {
+                itItemListItItem.getEmpleadoList().remove(empleado);
+                itItemListItItem = em.merge(itItemListItItem);
             }
             em.remove(empleado);
-            em.getTransaction().commit();
+           
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+                
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }

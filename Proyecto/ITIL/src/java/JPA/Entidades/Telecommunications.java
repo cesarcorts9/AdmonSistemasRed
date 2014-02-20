@@ -23,13 +23,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author madman
+ * @author DELL
  */
 @Entity
 @Table(name = "telecommunications")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Telecommunications.findAll", query = "SELECT t FROM Telecommunications t")})
+    @NamedQuery(name = "Telecommunications.findAll", query = "SELECT t FROM Telecommunications t"),
+    @NamedQuery(name = "Telecommunications.findByIdTelecom", query = "SELECT t FROM Telecommunications t WHERE t.idTelecom = :idTelecom"),
+    @NamedQuery(name = "Telecommunications.findByNumeroPuertosSalida", query = "SELECT t FROM Telecommunications t WHERE t.numeroPuertosSalida = :numeroPuertosSalida"),
+    @NamedQuery(name = "Telecommunications.findByNumeroPuertosEntrada", query = "SELECT t FROM Telecommunications t WHERE t.numeroPuertosEntrada = :numeroPuertosEntrada"),
+    @NamedQuery(name = "Telecommunications.findByTipoInterfaz", query = "SELECT t FROM Telecommunications t WHERE t.tipoInterfaz = :tipoInterfaz"),
+    @NamedQuery(name = "Telecommunications.findByDireccionFisica", query = "SELECT t FROM Telecommunications t WHERE t.direccionFisica = :direccionFisica"),
+    @NamedQuery(name = "Telecommunications.findByObservaciones", query = "SELECT t FROM Telecommunications t WHERE t.observaciones = :observaciones"),
+    @NamedQuery(name = "Telecommunications.findByDireccionIP", query = "SELECT t FROM Telecommunications t WHERE t.direccionIP = :direccionIP")})
 public class Telecommunications implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

@@ -12,49 +12,65 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import JPA.Entidades.ItItem;
+import JPA.Entidades.Computadora;
 import JPA.Entidades.Software;
 import JPA.Entidades_Controllers.exceptions.NonexistentEntityException;
 import JPA.Entidades_Controllers.exceptions.PreexistingEntityException;
 import JPA.Entidades_Controllers.exceptions.RollbackFailureException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.transaction.UserTransaction;
 
 /**
  *
- * @author madman
+ * @author DELL
  */
 public class SoftwareJpaController implements Serializable {
 
-    public SoftwareJpaController() {
+    public SoftwareJpaController(){
     }
-    private EntityManagerFactory emf = null;
+     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    private EntityManager getEntityManager() {
         emf = Persistence.createEntityManagerFactory("It_ITILPU");
         return emf.createEntityManager();
     }
 
     public void create(Software software) throws PreexistingEntityException, RollbackFailureException, Exception {
+        if (software.getComputadoraList() == null) {
+            software.setComputadoraList(new ArrayList<Computadora>());
+        }
         EntityManager em = null;
         try {
+            
             em = getEntityManager();
-            em.getTransaction().begin();
             ItItem itItem = software.getItItem();
             if (itItem != null) {
                 itItem = em.getReference(itItem.getClass(), itItem.getItItemPK());
                 software.setItItem(itItem);
             }
+            List<Computadora> attachedComputadoraList = new ArrayList<Computadora>();
+            for (Computadora computadoraListComputadoraToAttach : software.getComputadoraList()) {
+                computadoraListComputadoraToAttach = em.getReference(computadoraListComputadoraToAttach.getClass(), computadoraListComputadoraToAttach.getIdComputadora());
+                attachedComputadoraList.add(computadoraListComputadoraToAttach);
+            }
+            software.setComputadoraList(attachedComputadoraList);
             em.persist(software);
             if (itItem != null) {
-                itItem.getSoftwareCollection().add(software);
+                itItem.getSoftwareList().add(software);
                 itItem = em.merge(itItem);
             }
-            em.getTransaction().commit();
+            for (Computadora computadoraListComputadora : software.getComputadoraList()) {
+                computadoraListComputadora.getSoftwareList().add(software);
+                computadoraListComputadora = em.merge(computadoraListComputadora);
+            }
+             
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+               
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -72,28 +88,49 @@ public class SoftwareJpaController implements Serializable {
     public void edit(Software software) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+             
             em = getEntityManager();
-            em.getTransaction().begin();
             Software persistentSoftware = em.find(Software.class, software.getIdSoftware());
             ItItem itItemOld = persistentSoftware.getItItem();
             ItItem itItemNew = software.getItItem();
+            List<Computadora> computadoraListOld = persistentSoftware.getComputadoraList();
+            List<Computadora> computadoraListNew = software.getComputadoraList();
             if (itItemNew != null) {
                 itItemNew = em.getReference(itItemNew.getClass(), itItemNew.getItItemPK());
                 software.setItItem(itItemNew);
             }
+            List<Computadora> attachedComputadoraListNew = new ArrayList<Computadora>();
+            for (Computadora computadoraListNewComputadoraToAttach : computadoraListNew) {
+                computadoraListNewComputadoraToAttach = em.getReference(computadoraListNewComputadoraToAttach.getClass(), computadoraListNewComputadoraToAttach.getIdComputadora());
+                attachedComputadoraListNew.add(computadoraListNewComputadoraToAttach);
+            }
+            computadoraListNew = attachedComputadoraListNew;
+            software.setComputadoraList(computadoraListNew);
             software = em.merge(software);
             if (itItemOld != null && !itItemOld.equals(itItemNew)) {
-                itItemOld.getSoftwareCollection().remove(software);
+                itItemOld.getSoftwareList().remove(software);
                 itItemOld = em.merge(itItemOld);
             }
             if (itItemNew != null && !itItemNew.equals(itItemOld)) {
-                itItemNew.getSoftwareCollection().add(software);
+                itItemNew.getSoftwareList().add(software);
                 itItemNew = em.merge(itItemNew);
             }
-            em.getTransaction().commit();
+            for (Computadora computadoraListOldComputadora : computadoraListOld) {
+                if (!computadoraListNew.contains(computadoraListOldComputadora)) {
+                    computadoraListOldComputadora.getSoftwareList().remove(software);
+                    computadoraListOldComputadora = em.merge(computadoraListOldComputadora);
+                }
+            }
+            for (Computadora computadoraListNewComputadora : computadoraListNew) {
+                if (!computadoraListOld.contains(computadoraListNewComputadora)) {
+                    computadoraListNewComputadora.getSoftwareList().add(software);
+                    computadoraListNewComputadora = em.merge(computadoraListNewComputadora);
+                }
+            }
+             
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+                
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -115,8 +152,8 @@ public class SoftwareJpaController implements Serializable {
     public void destroy(String id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+             
             em = getEntityManager();
-            em.getTransaction().begin();
             Software software;
             try {
                 software = em.getReference(Software.class, id);
@@ -126,14 +163,19 @@ public class SoftwareJpaController implements Serializable {
             }
             ItItem itItem = software.getItItem();
             if (itItem != null) {
-                itItem.getSoftwareCollection().remove(software);
+                itItem.getSoftwareList().remove(software);
                 itItem = em.merge(itItem);
             }
+            List<Computadora> computadoraList = software.getComputadoraList();
+            for (Computadora computadoraListComputadora : computadoraList) {
+                computadoraListComputadora.getSoftwareList().remove(software);
+                computadoraListComputadora = em.merge(computadoraListComputadora);
+            }
             em.remove(software);
-            em.getTransaction().commit();
+             
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+                 
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }

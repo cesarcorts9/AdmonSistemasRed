@@ -3,6 +3,7 @@
   <persistence-unit name="It_ITILPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>JPA.Entidades.Area</class>
+    <class>JPA.Entidades.Computadora</class>
     <class>JPA.Entidades.Depto</class>
     <class>JPA.Entidades.Empleado</class>
     <class>JPA.Entidades.ItItem</class>
@@ -12,9 +13,10 @@
     <class>JPA.Entidades.Roles</class>
     <class>JPA.Entidades.Servidor</class>
     <class>JPA.Entidades.Software</class>
+    <class>JPA.Entidades.Sucursal</class>
     <class>JPA.Entidades.Telecommunications</class>
     <class>JPA.Entidades.Workstation</class>
-    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/cmdb?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.password" value="admin"/>

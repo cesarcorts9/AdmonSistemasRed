@@ -7,7 +7,7 @@
 package JPA.Entidades;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,13 +23,16 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author madman
+ * @author DELL
  */
 @Entity
 @Table(name = "roles")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Roles.findAll", query = "SELECT r FROM Roles r")})
+    @NamedQuery(name = "Roles.findAll", query = "SELECT r FROM Roles r"),
+    @NamedQuery(name = "Roles.findByRolidRol", query = "SELECT r FROM Roles r WHERE r.rolidRol = :rolidRol"),
+    @NamedQuery(name = "Roles.findByRolNombre", query = "SELECT r FROM Roles r WHERE r.rolNombre = :rolNombre"),
+    @NamedQuery(name = "Roles.findByRolDescripcion", query = "SELECT r FROM Roles r WHERE r.rolDescripcion = :rolDescripcion")})
 public class Roles implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -44,8 +47,8 @@ public class Roles implements Serializable {
     @Size(max = 100)
     @Column(name = "rol_Descripcion")
     private String rolDescripcion;
-    @ManyToMany(mappedBy = "rolesCollection")
-    private Collection<Empleado> empleadoCollection;
+    @ManyToMany(mappedBy = "rolesList")
+    private List<Empleado> empleadoList;
 
     public Roles() {
     }
@@ -79,12 +82,12 @@ public class Roles implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Empleado> getEmpleadoCollection() {
-        return empleadoCollection;
+    public List<Empleado> getEmpleadoList() {
+        return empleadoList;
     }
 
-    public void setEmpleadoCollection(Collection<Empleado> empleadoCollection) {
-        this.empleadoCollection = empleadoCollection;
+    public void setEmpleadoList(List<Empleado> empleadoList) {
+        this.empleadoList = empleadoList;
     }
 
     @Override

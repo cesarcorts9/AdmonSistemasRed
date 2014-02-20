@@ -23,13 +23,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author madman
+ * @author DELL
  */
 @Entity
 @Table(name = "perifericos")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Perifericos.findAll", query = "SELECT p FROM Perifericos p")})
+    @NamedQuery(name = "Perifericos.findAll", query = "SELECT p FROM Perifericos p"),
+    @NamedQuery(name = "Perifericos.findByIdPeriferico", query = "SELECT p FROM Perifericos p WHERE p.idPeriferico = :idPeriferico"),
+    @NamedQuery(name = "Perifericos.findByCategoria", query = "SELECT p FROM Perifericos p WHERE p.categoria = :categoria"),
+    @NamedQuery(name = "Perifericos.findByDescripcion", query = "SELECT p FROM Perifericos p WHERE p.descripcion = :descripcion")})
 public class Perifericos implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

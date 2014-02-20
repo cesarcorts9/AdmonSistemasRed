@@ -7,7 +7,7 @@
 package JPA.Entidades;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,13 +26,30 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author madman
+ * @author DELL
  */
 @Entity
 @Table(name = "empleado")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Empleado.findAll", query = "SELECT e FROM Empleado e")})
+    @NamedQuery(name = "Empleado.findAll", query = "SELECT e FROM Empleado e"),
+    @NamedQuery(name = "Empleado.findByEmpNoEmpleado", query = "SELECT e FROM Empleado e WHERE e.empNoEmpleado = :empNoEmpleado"),
+    @NamedQuery(name = "Empleado.findByEmpNombre", query = "SELECT e FROM Empleado e WHERE e.empNombre = :empNombre"),
+    @NamedQuery(name = "Empleado.findByEmpPaterno", query = "SELECT e FROM Empleado e WHERE e.empPaterno = :empPaterno"),
+    @NamedQuery(name = "Empleado.findByEmpMaterno", query = "SELECT e FROM Empleado e WHERE e.empMaterno = :empMaterno"),
+    @NamedQuery(name = "Empleado.findByEmpTelefono", query = "SELECT e FROM Empleado e WHERE e.empTelefono = :empTelefono"),
+    @NamedQuery(name = "Empleado.findByEmpCelular", query = "SELECT e FROM Empleado e WHERE e.empCelular = :empCelular"),
+    @NamedQuery(name = "Empleado.findByEmpEmail", query = "SELECT e FROM Empleado e WHERE e.empEmail = :empEmail"),
+    @NamedQuery(name = "Empleado.findByEmpusrMensajeria", query = "SELECT e FROM Empleado e WHERE e.empusrMensajeria = :empusrMensajeria"),
+    @NamedQuery(name = "Empleado.findByEmpUbicacion", query = "SELECT e FROM Empleado e WHERE e.empUbicacion = :empUbicacion"),
+    @NamedQuery(name = "Empleado.findByEmpLenguaje", query = "SELECT e FROM Empleado e WHERE e.empLenguaje = :empLenguaje"),
+    @NamedQuery(name = "Empleado.findByEmpUtc", query = "SELECT e FROM Empleado e WHERE e.empUtc = :empUtc"),
+    @NamedQuery(name = "Empleado.findByEmpDisponibilidad", query = "SELECT e FROM Empleado e WHERE e.empDisponibilidad = :empDisponibilidad"),
+    @NamedQuery(name = "Empleado.findByEmpServicios", query = "SELECT e FROM Empleado e WHERE e.empServicios = :empServicios"),
+    @NamedQuery(name = "Empleado.findByEmpIntereses", query = "SELECT e FROM Empleado e WHERE e.empIntereses = :empIntereses"),
+    @NamedQuery(name = "Empleado.findByEmpCertificaciones", query = "SELECT e FROM Empleado e WHERE e.empCertificaciones = :empCertificaciones"),
+    @NamedQuery(name = "Empleado.findByEmpHabilidades", query = "SELECT e FROM Empleado e WHERE e.empHabilidades = :empHabilidades"),
+    @NamedQuery(name = "Empleado.findByEmpResponsabilidades", query = "SELECT e FROM Empleado e WHERE e.empResponsabilidades = :empResponsabilidades")})
 public class Empleado implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -99,14 +116,18 @@ public class Empleado implements Serializable {
         @JoinColumn(name = "empleado_emp_NoEmpleado", referencedColumnName = "emp_NoEmpleado")}, inverseJoinColumns = {
         @JoinColumn(name = "lenguaje_len_lenguaje", referencedColumnName = "len_lenguaje")})
     @ManyToMany
-    private Collection<Lenguaje> lenguajeCollection;
+    private List<Lenguaje> lenguajeList;
     @JoinTable(name = "empleado_has_roles", joinColumns = {
         @JoinColumn(name = "empleado_emp_NoEmpleado", referencedColumnName = "emp_NoEmpleado")}, inverseJoinColumns = {
         @JoinColumn(name = "roles_rol_idRol", referencedColumnName = "rol_idRol")})
     @ManyToMany
-    private Collection<Roles> rolesCollection;
-    @ManyToMany(mappedBy = "empleadoCollection")
-    private Collection<ItItem> itItemCollection;
+    private List<Roles> rolesList;
+    @JoinTable(name = "it_item_has_empleado", joinColumns = {
+        @JoinColumn(name = "empleado_emp_NoEmpleado", referencedColumnName = "emp_NoEmpleado")}, inverseJoinColumns = {
+        @JoinColumn(name = "IT_item_it_serie", referencedColumnName = "it_serie"),
+        @JoinColumn(name = "IT_item_it_marca", referencedColumnName = "it_marca")})
+    @ManyToMany
+    private List<ItItem> itItemList;
     @JoinColumn(name = "area_are_idArea", referencedColumnName = "are_idArea")
     @ManyToOne(optional = false)
     private Area areaareidArea;
@@ -262,30 +283,30 @@ public class Empleado implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Lenguaje> getLenguajeCollection() {
-        return lenguajeCollection;
+    public List<Lenguaje> getLenguajeList() {
+        return lenguajeList;
     }
 
-    public void setLenguajeCollection(Collection<Lenguaje> lenguajeCollection) {
-        this.lenguajeCollection = lenguajeCollection;
-    }
-
-    @XmlTransient
-    public Collection<Roles> getRolesCollection() {
-        return rolesCollection;
-    }
-
-    public void setRolesCollection(Collection<Roles> rolesCollection) {
-        this.rolesCollection = rolesCollection;
+    public void setLenguajeList(List<Lenguaje> lenguajeList) {
+        this.lenguajeList = lenguajeList;
     }
 
     @XmlTransient
-    public Collection<ItItem> getItItemCollection() {
-        return itItemCollection;
+    public List<Roles> getRolesList() {
+        return rolesList;
     }
 
-    public void setItItemCollection(Collection<ItItem> itItemCollection) {
-        this.itItemCollection = itItemCollection;
+    public void setRolesList(List<Roles> rolesList) {
+        this.rolesList = rolesList;
+    }
+
+    @XmlTransient
+    public List<ItItem> getItItemList() {
+        return itItemList;
+    }
+
+    public void setItItemList(List<ItItem> itItemList) {
+        this.itItemList = itItemList;
     }
 
     public Area getAreaareidArea() {

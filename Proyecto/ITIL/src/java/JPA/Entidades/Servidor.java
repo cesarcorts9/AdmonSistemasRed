@@ -7,7 +7,9 @@
 package JPA.Entidades;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -16,20 +18,31 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author madman
+ * @author DELL
  */
 @Entity
 @Table(name = "servidor")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Servidor.findAll", query = "SELECT s FROM Servidor s")})
+    @NamedQuery(name = "Servidor.findAll", query = "SELECT s FROM Servidor s"),
+    @NamedQuery(name = "Servidor.findByIdServidor", query = "SELECT s FROM Servidor s WHERE s.idServidor = :idServidor"),
+    @NamedQuery(name = "Servidor.findByProcesardor", query = "SELECT s FROM Servidor s WHERE s.procesardor = :procesardor"),
+    @NamedQuery(name = "Servidor.findByMemoria", query = "SELECT s FROM Servidor s WHERE s.memoria = :memoria"),
+    @NamedQuery(name = "Servidor.findByDiscoDuro", query = "SELECT s FROM Servidor s WHERE s.discoDuro = :discoDuro"),
+    @NamedQuery(name = "Servidor.findByUnidadOptica", query = "SELECT s FROM Servidor s WHERE s.unidadOptica = :unidadOptica"),
+    @NamedQuery(name = "Servidor.findByBateriaReserva", query = "SELECT s FROM Servidor s WHERE s.bateriaReserva = :bateriaReserva"),
+    @NamedQuery(name = "Servidor.findByDescripcion", query = "SELECT s FROM Servidor s WHERE s.descripcion = :descripcion"),
+    @NamedQuery(name = "Servidor.findByDireccionIP", query = "SELECT s FROM Servidor s WHERE s.direccionIP = :direccionIP"),
+    @NamedQuery(name = "Servidor.findByArquitectura", query = "SELECT s FROM Servidor s WHERE s.arquitectura = :arquitectura")})
 public class Servidor implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -67,6 +80,8 @@ public class Servidor implements Serializable {
         @JoinColumn(name = "IT_item_it_marca", referencedColumnName = "it_marca")})
     @ManyToOne(optional = false)
     private ItItem itItem;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "servidoridServidor")
+    private List<Computadora> computadoraList;
 
     public Servidor() {
     }
@@ -153,6 +168,15 @@ public class Servidor implements Serializable {
 
     public void setItItem(ItItem itItem) {
         this.itItem = itItem;
+    }
+
+    @XmlTransient
+    public List<Computadora> getComputadoraList() {
+        return computadoraList;
+    }
+
+    public void setComputadoraList(List<Computadora> computadoraList) {
+        this.computadoraList = computadoraList;
     }
 
     @Override

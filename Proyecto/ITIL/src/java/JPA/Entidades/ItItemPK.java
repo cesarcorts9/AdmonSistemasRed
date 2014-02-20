@@ -15,7 +15,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author madman
+ * @author DELL
  */
 @Embeddable
 public class ItItemPK implements Serializable {

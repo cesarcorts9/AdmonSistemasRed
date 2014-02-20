@@ -17,50 +17,50 @@ import JPA.Entidades_Controllers.exceptions.NonexistentEntityException;
 import JPA.Entidades_Controllers.exceptions.PreexistingEntityException;
 import JPA.Entidades_Controllers.exceptions.RollbackFailureException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.transaction.UserTransaction;
 
 /**
  *
- * @author madman
+ * @author DELL
  */
 public class LenguajeJpaController implements Serializable {
 
-    public LenguajeJpaController() {
- }
-    private EntityManagerFactory emf = null;
+    public LenguajeJpaController(){
+    }
+     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    private EntityManager getEntityManager() {
         emf = Persistence.createEntityManagerFactory("It_ITILPU");
         return emf.createEntityManager();
     }
 
     public void create(Lenguaje lenguaje) throws PreexistingEntityException, RollbackFailureException, Exception {
-        if (lenguaje.getEmpleadoCollection() == null) {
-            lenguaje.setEmpleadoCollection(new ArrayList<Empleado>());
+        if (lenguaje.getEmpleadoList() == null) {
+            lenguaje.setEmpleadoList(new ArrayList<Empleado>());
         }
         EntityManager em = null;
         try {
-          em = getEntityManager();
-            em.getTransaction().begin();
-            Collection<Empleado> attachedEmpleadoCollection = new ArrayList<Empleado>();
-            for (Empleado empleadoCollectionEmpleadoToAttach : lenguaje.getEmpleadoCollection()) {
-                empleadoCollectionEmpleadoToAttach = em.getReference(empleadoCollectionEmpleadoToAttach.getClass(), empleadoCollectionEmpleadoToAttach.getEmpNoEmpleado());
-                attachedEmpleadoCollection.add(empleadoCollectionEmpleadoToAttach);
+           
+            em = getEntityManager();
+            List<Empleado> attachedEmpleadoList = new ArrayList<Empleado>();
+            for (Empleado empleadoListEmpleadoToAttach : lenguaje.getEmpleadoList()) {
+                empleadoListEmpleadoToAttach = em.getReference(empleadoListEmpleadoToAttach.getClass(), empleadoListEmpleadoToAttach.getEmpNoEmpleado());
+                attachedEmpleadoList.add(empleadoListEmpleadoToAttach);
             }
-            lenguaje.setEmpleadoCollection(attachedEmpleadoCollection);
+            lenguaje.setEmpleadoList(attachedEmpleadoList);
             em.persist(lenguaje);
-            for (Empleado empleadoCollectionEmpleado : lenguaje.getEmpleadoCollection()) {
-                empleadoCollectionEmpleado.getLenguajeCollection().add(lenguaje);
-                empleadoCollectionEmpleado = em.merge(empleadoCollectionEmpleado);
+            for (Empleado empleadoListEmpleado : lenguaje.getEmpleadoList()) {
+                empleadoListEmpleado.getLenguajeList().add(lenguaje);
+                empleadoListEmpleado = em.merge(empleadoListEmpleado);
             }
-            em.getTransaction().commit();
+           
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+               
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -78,35 +78,35 @@ public class LenguajeJpaController implements Serializable {
     public void edit(Lenguaje lenguaje) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-          em = getEntityManager();
-            em.getTransaction().begin();
+            
+            em = getEntityManager();
             Lenguaje persistentLenguaje = em.find(Lenguaje.class, lenguaje.getLenLenguaje());
-            Collection<Empleado> empleadoCollectionOld = persistentLenguaje.getEmpleadoCollection();
-            Collection<Empleado> empleadoCollectionNew = lenguaje.getEmpleadoCollection();
-            Collection<Empleado> attachedEmpleadoCollectionNew = new ArrayList<Empleado>();
-            for (Empleado empleadoCollectionNewEmpleadoToAttach : empleadoCollectionNew) {
-                empleadoCollectionNewEmpleadoToAttach = em.getReference(empleadoCollectionNewEmpleadoToAttach.getClass(), empleadoCollectionNewEmpleadoToAttach.getEmpNoEmpleado());
-                attachedEmpleadoCollectionNew.add(empleadoCollectionNewEmpleadoToAttach);
+            List<Empleado> empleadoListOld = persistentLenguaje.getEmpleadoList();
+            List<Empleado> empleadoListNew = lenguaje.getEmpleadoList();
+            List<Empleado> attachedEmpleadoListNew = new ArrayList<Empleado>();
+            for (Empleado empleadoListNewEmpleadoToAttach : empleadoListNew) {
+                empleadoListNewEmpleadoToAttach = em.getReference(empleadoListNewEmpleadoToAttach.getClass(), empleadoListNewEmpleadoToAttach.getEmpNoEmpleado());
+                attachedEmpleadoListNew.add(empleadoListNewEmpleadoToAttach);
             }
-            empleadoCollectionNew = attachedEmpleadoCollectionNew;
-            lenguaje.setEmpleadoCollection(empleadoCollectionNew);
+            empleadoListNew = attachedEmpleadoListNew;
+            lenguaje.setEmpleadoList(empleadoListNew);
             lenguaje = em.merge(lenguaje);
-            for (Empleado empleadoCollectionOldEmpleado : empleadoCollectionOld) {
-                if (!empleadoCollectionNew.contains(empleadoCollectionOldEmpleado)) {
-                    empleadoCollectionOldEmpleado.getLenguajeCollection().remove(lenguaje);
-                    empleadoCollectionOldEmpleado = em.merge(empleadoCollectionOldEmpleado);
+            for (Empleado empleadoListOldEmpleado : empleadoListOld) {
+                if (!empleadoListNew.contains(empleadoListOldEmpleado)) {
+                    empleadoListOldEmpleado.getLenguajeList().remove(lenguaje);
+                    empleadoListOldEmpleado = em.merge(empleadoListOldEmpleado);
                 }
             }
-            for (Empleado empleadoCollectionNewEmpleado : empleadoCollectionNew) {
-                if (!empleadoCollectionOld.contains(empleadoCollectionNewEmpleado)) {
-                    empleadoCollectionNewEmpleado.getLenguajeCollection().add(lenguaje);
-                    empleadoCollectionNewEmpleado = em.merge(empleadoCollectionNewEmpleado);
+            for (Empleado empleadoListNewEmpleado : empleadoListNew) {
+                if (!empleadoListOld.contains(empleadoListNewEmpleado)) {
+                    empleadoListNewEmpleado.getLenguajeList().add(lenguaje);
+                    empleadoListNewEmpleado = em.merge(empleadoListNewEmpleado);
                 }
             }
-            em.getTransaction().commit();
+          
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+                
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -128,8 +128,8 @@ public class LenguajeJpaController implements Serializable {
     public void destroy(String id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-          em = getEntityManager();
-            em.getTransaction().begin();
+            
+            em = getEntityManager();
             Lenguaje lenguaje;
             try {
                 lenguaje = em.getReference(Lenguaje.class, id);
@@ -137,16 +137,16 @@ public class LenguajeJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The lenguaje with id " + id + " no longer exists.", enfe);
             }
-            Collection<Empleado> empleadoCollection = lenguaje.getEmpleadoCollection();
-            for (Empleado empleadoCollectionEmpleado : empleadoCollection) {
-                empleadoCollectionEmpleado.getLenguajeCollection().remove(lenguaje);
-                empleadoCollectionEmpleado = em.merge(empleadoCollectionEmpleado);
+            List<Empleado> empleadoList = lenguaje.getEmpleadoList();
+            for (Empleado empleadoListEmpleado : empleadoList) {
+                empleadoListEmpleado.getLenguajeList().remove(lenguaje);
+                empleadoListEmpleado = em.merge(empleadoListEmpleado);
             }
             em.remove(lenguaje);
-            em.getTransaction().commit();
+            
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+                
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
